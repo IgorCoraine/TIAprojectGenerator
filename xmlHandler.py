@@ -27,7 +27,7 @@ def extract_info(xml_file):
     return devices
 
 # Caminho para o arquivo XML
-xml_file_path = "C:\\Users\\Cora\\Desktop\\my.xml"
+xml_file_path = "C:\\Users\\Cassioli\\Desktop\\my.xml"
 
 # Extrair informações do arquivo XML
 device_info = extract_info(xml_file_path)

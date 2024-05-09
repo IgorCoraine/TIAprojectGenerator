@@ -4,7 +4,12 @@ from tkinter import filedialog
 class FileParameterUI:
     def __init__(self, master):
         self.master = master
+        self.master.iconbitmap('.\\cora.ico')
         self.master.title("TIA Project Generator")
+
+        self.xml_path = ""
+        self.project_path = ""
+        self.project_name = ""
 
         self.file_label = tk.Label(master, text="Tia Selection Tool:")
         self.file_label.grid(row=0, column=0, sticky="w", padx=10, pady=5)
