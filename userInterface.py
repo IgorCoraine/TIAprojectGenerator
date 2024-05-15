@@ -1,4 +1,10 @@
+import clr
+clr.AddReference('C:\Program Files\Siemens\Automation\Portal V18\PublicAPI\V18\Siemens.Engineering.dll')
+import Siemens.Engineering.HW
+
 import os
+import ctypes
+#from PIL import Image
 import tkinter as tk
 from tkinter import filedialog
 from openness import TIAProject
@@ -8,6 +14,7 @@ class ProjectGeneratorUI:
     def __init__(self, master):
         self.master = master
         self.master.iconbitmap('.\\cora.ico')
+        #self.set_taskbar_icon(master, 'C:\\Users\\Cassioli\\Documents\\Automation\\Openess\\TIAprojectGenerator\\cora.png')
         self.master.title("TIA Project Generator")
 
         self.tia_project = TIAProject()
@@ -43,6 +50,19 @@ class ProjectGeneratorUI:
 
         self.output_text = tk.Text(master, width=50, height=10)
         self.output_text.grid(row=5, columnspan=3, padx=10, pady=5)
+
+    # def set_taskbar_icon(self, window, icon_path):
+    #     # Carregar a biblioteca de usuário do Windows
+    #     user32 = ctypes.windll.user32
+    #     # Carregar o ícone
+    #     # Converter a imagem para um formato suportado (BMP)
+    #     icon = Image.open(icon_path)
+    #     bmp_path = "icon.bmp"
+    #     icon.save(bmp_path, format="BMP")
+    #     # Obter o identificador da janela
+    #     hwnd = user32.GetParent(window.winfo_id())
+    #     # Definir o ícone da janela na barra de tarefas
+    #     user32.SendMessageW(hwnd, 0x80, 1, icon_path)  # WM_SETICON
 
     def browse_xml(self):
         file_path = filedialog.askopenfilename(filetypes=[("TIA Selection Tools Files", "*.tia")])
@@ -99,11 +119,11 @@ class ProjectGeneratorUI:
         self.output_text.insert(tk.END, f"Creating devices...\n")
         self.master.update()
         for idx, device in enumerate(self.devices, start=1):
-            self.output_text.insert(tk.END, f"Creating Device {idx}: {device.name}\n")
+            self.output_text.insert(tk.END, f"Creating device {idx}: {device.name}\n")
             self.output_text.see(tk.END)
             self.master.update()
             try:
-                self.tia_project.create_device(device.name, device.modules[0], 10.0)
+                device.instance = self.tia_project.create_device(device.name, device.modules[0], 10.0)
             except Exception as e:
                 self.output_text.insert(tk.END, f"❌ Error to create the device: {e}\n")
                 self.output_text.see(tk.END)
@@ -112,6 +132,28 @@ class ProjectGeneratorUI:
                 self.output_text.insert(tk.END, f"✔ Device created successfully\n")
                 self.output_text.see(tk.END)
                 self.master.update()
+
+        #plug modules
+        self.output_text.insert(tk.END, f"Plugging modules to the devices...\n")
+        for idx, device in enumerate(self.devices, start=1):
+            self.output_text.insert(tk.END, f"Plugging modules at {device.name}:\n")
+            self.output_text.see(tk.END)
+            self.master.update()
+            for idx, module in enumerate(device.modules, start=1):
+                self.output_text.insert(tk.END, f"Plugging module {idx}: {module}\n")
+                self.output_text.see(tk.END)
+                self.master.update()
+                try:
+                    self.tia_project.plug_device(device, idx)
+                except Exception as e:
+                    self.output_text.insert(tk.END, f"❌ Error to plug module to device: {e}\n")
+                    self.output_text.see(tk.END)
+                    return
+                else:
+                    self.output_text.insert(tk.END, f"✔ Module plugged successfully\n")
+                    self.output_text.see(tk.END)
+                    self.master.update()
+
     # def output_animated_text(self, text):
     #     self.output_text.delete(1.0, tk.END) 
     #     if count <= 3:

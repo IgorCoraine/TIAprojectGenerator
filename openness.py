@@ -5,6 +5,7 @@ import Siemens.Engineering as tia
 import Siemens.Engineering.HW.Features as hwf
 import Siemens.Engineering.Compiler as comp
 import os
+from device import Device
 
 
 class TIAProject:
@@ -36,7 +37,12 @@ class TIAProject:
         except tia.EngineeringTargetInvocationException:
             print('invalid version')
             version -= 0.1
-            self.create_device(name, device, round(version,1))
+            return self.create_device(name, device, round(version,1))
+
+    #Plugging modules to devices
+    def plug_device(self, device: Device, module: int):
+        if (device.instance.DeviceItems[0].CanPlugNew(f'OrderNumber:{device.modules[module]}',f'IO{module}', module)): 
+            device.instance.DeviceItems[0].PlugNew(f'OrderNumber:{device.modules[module]}',f'IO{module}', module)
 
 
     #PLC1 = create_device('PLC1', '6ES7 518-4FP00-0AB0', 10.0)

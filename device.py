@@ -1,6 +1,7 @@
 class Device:
     def __init__(self, name):
         self.name = name
+        self.instance = None
         self.modules = []
 
     def add_module(self, module):
